@@ -751,7 +751,7 @@
             submitTest() {
                 const unanswered = this.answers.filter(answer => answer === null);
                 if (unanswered.length > 0) {
-                    if (confirm(`暖宝，您还有${unanswered.length}题未作答，确定要提交吗？`)) {
+                    if (confirm(`您还有${unanswered.length}题未作答，确定要提交吗？`)) {
                         this.finalizeSubmission();
                     }
                 } else {

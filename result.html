@@ -486,9 +486,9 @@
             </div>
             
             <div class="action-buttons">
-                <a href="index.html" class="btn btn-primary">
-                    <i class="fas fa-home"></i> 返回首页
-                </a>
+                <button id="destroyData" class="btn btn-primary">
+                    <i class="fas fa-trash"></i> 销毁记录
+                </button>
                 <button id="retestBtn" class="btn btn-secondary">
                     <i class="fas fa-redo"></i> 重新测试
                 </button>
@@ -504,6 +504,17 @@
                     <div style="display: flex; gap: 15px; justify-content: flex-end;">
                         <button id="cancelRetest" style="padding: 10px 25px; border: none; border-radius: 8px; background: #95a5a6; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">取消</button>
                         <button id="confirmRetest" style="padding: 10px 25px; border: none; border-radius: 8px; background: #2ecc71; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">重新测试</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="destroyModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 9999; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;">
+                <div style="background: white; border-radius: 15px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.3rem;">确认销毁记录</h3>
+                    <p style="color: #666; margin-bottom: 30px; line-height: 1.6;">确定要销毁所有测试记录吗？此操作不可恢复。</p>
+                    <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                        <button id="cancelDestroy" style="padding: 10px 25px; border: none; border-radius: 8px; background: #95a5a6; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">取消</button>
+                        <button id="confirmDestroy" style="padding: 10px 25px; border: none; border-radius: 8px; background: #e74c3c; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">确认销毁</button>
                     </div>
                 </div>
             </div>
@@ -809,6 +820,27 @@
                 localStorage.removeItem('scl90_test_progress');
                 localStorage.removeItem('scl90_answers');
                 window.location.href = 'test.html';
+            });
+            
+            const destroyDataBtn = document.getElementById('destroyData');
+            const destroyModal = document.getElementById('destroyModal');
+            const cancelDestroy = document.getElementById('cancelDestroy');
+            const confirmDestroy = document.getElementById('confirmDestroy');
+            
+            destroyDataBtn.addEventListener('click', () => {
+                destroyModal.style.display = 'flex';
+            });
+            
+            cancelDestroy.addEventListener('click', () => {
+                destroyModal.style.display = 'none';
+            });
+            
+            confirmDestroy.addEventListener('click', () => {
+                destroyModal.style.display = 'none';
+                localStorage.removeItem('invite_code_valid');
+                localStorage.removeItem('scl90_test_progress');
+                localStorage.removeItem('scl90_answers');
+                window.location.href = 'index.html';
             });
         });
     </script>
