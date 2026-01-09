@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCL-90测试 - 症状自评量表</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4b6cb7;
+            --secondary-color: #182848;
+            --accent-color: #3498db;
+            --light-color: #f8f9fa;
+            --dark-color: #2c3e50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .test-info {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 30px 0 50px;
+        }
+        
+        .progress-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 20px 40px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .progress-stats {
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #2ecc71;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .instructions {
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .instructions h2 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.7;
+        }
+        
+        .time-range {
+            background: #e3f2fd;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .questions-container {
+            padding: 30px 40px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .question-item {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question-item:last-child {
+            border-bottom: none;
+        }
+        
+        .question-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .question-number {
+            background: var(--primary-color);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            line-height: 1.5;
+            color: var(--dark-color);
+            margin: 0;
+            flex: 1;
+        }
+        
+        .options-container {
+            margin-left: 50px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            color: #555;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        
+        .option-btn:hover {
+            background: #f0f0f0;
+            transform: none;
+        }
+        
+        .option-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(75, 108, 183, 0.2);
+        }
+        
+        .option-btn:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .option-btn:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .option-btn:not(:first-child):not(:last-child) {
+            border-radius: 0;
+        }
+        
+        .options-container {
+            margin-left: 50px;
+        }
+        
+        .option-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .navigation-buttons {
+            padding: 25px 40px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-submit {
+            background: #2ecc71;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .btn-submit:hover:not(:disabled) {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-submit:disabled {
+            background: #e0e0e0;
+            color: #a0a0a0;
+            cursor: not-allowed;
+            opacity: 0.7;
+            border: 1px solid #d0d0d0;
+        }
+        
+        .btn-submit:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .save-notice {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .questions-container {
+                padding: 20px;
+                max-height: none;
+                overflow-y: visible;
+            }
+            
+            .progress-section, .instructions, .navigation-buttons {
+                padding: 20px;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 2px;
+            }
+            
+            .option-btn {
+                font-size: 0.7rem;
+                padding: 8px 4px;
+                min-height: auto;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .nav-btn {
+                padding: 10px 20px;
+            }
+        }
+        
+        .questions-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .questions-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .questions-container::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        .questions-container::-webkit-scrollbar-thumb:hover {
+            background: #3a56a4;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-item {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .option-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .option-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(40, 40);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .question-header {
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .options-container {
+                margin-left: 0;
+            }
+            
+            .options-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1px;
+            }
+            
+            .option-btn {
+                font-size: 0.65rem;
+                padding: 6px 3px;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-brain"></i>
+                    SCL-90测试
+                </a>
+                <div class="test-info">
+                    <i class="fas fa-clock"></i> 预计时间: 15-20分钟
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="test-container">
+            <div class="progress-section">
+                <div class="progress-header">
+                    <div class="progress-title">SCL-90症状自评量表</div>
+                    <div class="progress-stats">
+                        已完成 <span id="answeredCount">0</span>/90 题
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text">
+                    <span>0%</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h2><i class="fas fa-info-circle"></i> 测试说明</h2>
+                <p>请仔细阅读每一条题目，然后根据<strong>最近一周</strong>内下列问题影响您或使您感到苦恼的程度，选择最符合您实际情况的选项。</p>
+                <p>答案没有对错之分，请根据您的真实感受作答，不要过多思考。</p>
+                
+                <div class="time-range">
+                    <strong><i class="fas fa-calendar-week"></i> 时间范围:</strong> 最近一周（包括今天）
+                </div>
+            </div>
+            
+            <div class="questions-container" id="questionsContainer">
+            </div>
+            
+            <div class="save-notice" id="saveNotice" style="text-align: center; padding: 10px; background: #e8f5e8; color: #27ae60; font-size: 0.9rem;"></div>
+            
+            <div class="navigation-buttons">
+                <div>
+                    <button class="nav-btn btn-submit" id="submitBtn" disabled>
+                        <i class="fas fa-paper-plane"></i> 提交测试
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="customModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 9999; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;">
+        <div style="background: white; border-radius: 15px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.3rem;">检测到未完成测试</h3>
+            <p style="color: #666; margin-bottom: 30px; line-height: 1.6;">检测到之前有未完成的测试，是否继续？</p>
+            <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                <button id="continueTest" style="padding: 10px 25px; border: none; border-radius: 8px; background: #3498db; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">继续测试</button>
+                <button id="newTest" style="padding: 10px 25px; border: none; border-radius: 8px; background: #2ecc71; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">开始新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (localStorage.getItem('invite_code_valid') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <script>
+        const SCL90_QUESTIONS = [
+            {id: 1, cn: "头痛", factor: "SOM"},
+            {id: 2, cn: "神经过敏，内心不踏实", factor: "ANX"},
+            {id: 3, cn: "头脑中有不必要的想法或字句盘旋", factor: "OCD"},
+            {id: 4, cn: "头昏或昏倒", factor: "SOM"},
+            {id: 5, cn: "对异性的兴趣减退", factor: "DEP"},
+            {id: 6, cn: "对旁人责备求全", factor: "INT"},
+            {id: 7, cn: "感到别人能控制您的思想", factor: "PSY"},
+            {id: 8, cn: "责怪别人制造麻烦", factor: "PAR"},
+            {id: 9, cn: "忘记性大", factor: "OCD"},
+            {id: 10, cn: "担心自己的衣饰整齐及仪态的端正", factor: "OCD"},
+            {id: 11, cn: "容易烦恼和激动", factor: "HOS"},
+            {id: 12, cn: "胸痛", factor: "SOM"},
+            {id: 13, cn: "害怕空旷的场所或街道", factor: "PHO"},
+            {id: 14, cn: "感到自己的精力下降，活动减慢", factor: "DEP"},
+            {id: 15, cn: "想结束自己的生命", factor: "DEP"},
+            {id: 16, cn: "听到旁人听不到的声音", factor: "PSY"},
+            {id: 17, cn: "发抖", factor: "ANX"},
+            {id: 18, cn: "感到大多数人都不可信任", factor: "PAR"},
+            {id: 19, cn: "胃口不好", factor: "OTH"},
+            {id: 20, cn: "容易哭泣", factor: "DEP"},
+            {id: 21, cn: "同异性相处时感到害羞不自在", factor: "INT"},
+            {id: 22, cn: "感到受骗，中了圈套或有人想抓住您", factor: "DEP"},
+            {id: 23, cn: "无缘无故地突然感到害怕", factor: "ANX"},
+            {id: 24, cn: "自己不能控制地大发脾气", factor: "HOS"},
+            {id: 25, cn: "怕单独出门", factor: "PHO"},
+            {id: 26, cn: "经常责怪自己", factor: "DEP"},
+            {id: 27, cn: "腰痛", factor: "SOM"},
+            {id: 28, cn: "感到难以完成任务", factor: "OCD"},
+            {id: 29, cn: "感到孤独", factor: "DEP"},
+            {id: 30, cn: "感到苦闷", factor: "DEP"},
+            {id: 31, cn: "过分担忧", factor: "DEP"},
+            {id: 32, cn: "对事物不感兴趣", factor: "DEP"},
+            {id: 33, cn: "感到害怕", factor: "ANX"},
+            {id: 34, cn: "您的感情容易受到伤害", factor: "INT"},
+            {id: 35, cn: "旁人能知道您的私下想法", factor: "PSY"},
+            {id: 36, cn: "感到别人不理解您、不同情愫您", factor: "INT"},
+            {id: 37, cn: "感到人们对您不友好，不喜欢您", factor: "INT"},
+            {id: 38, cn: "做事必须做得很慢以保证做得正确", factor: "OCD"},
+            {id: 39, cn: "心跳得很厉害", factor: "ANX"},
+            {id: 40, cn: "恶心或胃部不舒服", factor: "SOM"},
+            {id: 41, cn: "感到比不上他人", factor: "INT"},
+            {id: 42, cn: "肌肉酸痛", factor: "SOM"},
+            {id: 43, cn: "感到有人在监视您、谈论您", factor: "PAR"},
+            {id: 44, cn: "难以入睡", factor: "OTH"},
+            {id: 45, cn: "做事必须反复检查", factor: "OCD"},
+            {id: 46, cn: "难以作出决定", factor: "OCD"},
+            {id: 47, cn: "乘公共汽车、地铁或火车旅行时感到害怕", factor: "PHO"},
+            {id: 48, cn: "呼吸有困难", factor: "SOM"},
+            {id: 49, cn: "一阵阵发冷或发热", factor: "SOM"},
+            {id: 50, cn: "因为感到害怕而避开某些东西、场合或活动", factor: "PHO"},
+            {id: 51, cn: "脑子变空了", factor: "OCD"},
+            {id: 52, cn: "身体发麻或刺痛", factor: "SOM"},
+            {id: 53, cn: "喉咙有梗塞感", factor: "SOM"},
+            {id: 54, cn: "感到前途没有希望", factor: "DEP"},
+            {id: 55, cn: "不能集中注意", factor: "OCD"},
+            {id: 56, cn: "感到身体的某一部分软弱无力", factor: "SOM"},
+            {id: 57, cn: "感到紧张或容易紧张", factor: "ANX"},
+            {id: 58, cn: "感到手或脚发重", factor: "SOM"},
+            {id: 59, cn: "想到死亡的事", factor: "OTH"},
+            {id: 60, cn: "吃得太多", factor: "OTH"},
+            {id: 61, cn: "当别人看着您或谈论您时感到不自在", factor: "INT"},
+            {id: 62, cn: "有一些不属于您自己的想法", factor: "PSY"},
+            {id: 63, cn: "有想打人或伤害他人的冲动", factor: "HOS"},
+            {id: 64, cn: "早醒", factor: "OTH"},
+            {id: 65, cn: "必须反复洗手、点数或触摸某些东西", factor: "OCD"},
+            {id: 66, cn: "睡得不稳不深", factor: "OTH"},
+            {id: 67, cn: "有想摔坏或破坏东西的冲动", factor: "HOS"},
+            {id: 68, cn: "有一些别人没有的想法或信念", factor: "PAR"},
+            {id: 69, cn: "感到对别人神经过敏", factor: "INT"},
+            {id: 70, cn: "在商店或电影院等人多的地方感到不自在", factor: "PHO"},
+            {id: 71, cn: "感到任何事情都很困难", factor: "DEP"},
+            {id: 72, cn: "一阵阵恐惧或惊恐", factor: "ANX"},
+            {id: 73, cn: "感到在公共场合吃东西很不舒服", factor: "INT"},
+            {id: 74, cn: "经常与人争论", factor: "HOS"},
+            {id: 75, cn: "单独一人时神经很紧张", factor: "PHO"},
+            {id: 76, cn: "别人对您的成绩没有作出恰当的评价", factor: "PAR"},
+            {id: 77, cn: "即使和别人在一起也感到孤独", factor: "PSY"},
+            {id: 78, cn: "感到坐立不安心神不宁", factor: "ANX"},
+            {id: 79, cn: "感到自己没有什么价值", factor: "DEP"},
+            {id: 80, cn: "感到熟悉的东西变得陌生或不像是真的", factor: "ANX"},
+            {id: 81, cn: "大叫或摔东西", factor: "HOS"},
+            {id: 82, cn: "害怕会在公共场合昏倒", factor: "PHO"},
+            {id: 83, cn: "感到别人想占您的便宜", factor: "PAR"},
+            {id: 84, cn: "为一些有关性的想法而很苦恼", factor: "PSY"},
+            {id: 85, cn: "您认为应该因为自己的过错而受到惩罚", factor: "PSY"},
+            {id: 86, cn: "感到要很快把事情做完", factor: "ANX"},
+            {id: 87, cn: "感到自己的身体有严重问题", factor: "PSY"},
+            {id: 88, cn: "从未感到和其他人很亲近", factor: "PSY"},
+            {id: 89, cn: "感到自己有罪", factor: "OTH"},
+            {id: 90, cn: "感到自己的脑子有毛病", factor: "PSY"}
+        ];
+        
+        const SCORING_OPTIONS = [
+            { score: 0, label: "没有" },
+            { score: 1, label: "很轻" },
+            { score: 2, label: "中度" },
+            { score: 3, label: "偏重" },
+            { score: 4, label: "严重" }
+        ];
+        
+        class SCL90Test {
+            constructor() {
+                this.questions = SCL90_QUESTIONS;
+                this.currentQuestion = 0;
+                this.answers = new Array(this.questions.length).fill(null);
+                this.init();
+            }
+            
+            init() {
+                this.loadProgress();
+                this.renderQuestions();
+                this.updateProgress();
+                this.setupEventListeners();
+            }
+            
+            loadProgress() {
+                const saved = localStorage.getItem('scl90_test_progress');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.answers = data.answers;
+                    this.currentQuestion = data.currentQuestion || 0;
+                }
+            }
+            
+            saveProgress() {
+                const data = {
+                    answers: this.answers,
+                    currentQuestion: this.currentQuestion,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('scl90_test_progress', JSON.stringify(data));
+                this.showSaveNotice();
+            }
+            
+            showSaveNotice() {
+                const notice = document.getElementById('saveNotice');
+                notice.innerHTML = '<i class="fas fa-save"></i> 进度已自动保存';
+                notice.style.color = '#27ae60';
+                notice.style.display = 'block';
+                
+                setTimeout(() => {
+                    notice.style.display = 'none';
+                }, 2000);
+            }
+            
+            renderQuestions() {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = '';
+                
+                this.questions.forEach((question, index) => {
+                    const questionEl = this.createQuestionElement(question, index);
+                    container.appendChild(questionEl);
+                });
+                
+                this.scrollToCurrentQuestion();
+            }
+            
+            createQuestionElement(question, index) {
+                const questionEl = document.createElement('div');
+                questionEl.className = 'question-item';
+                questionEl.id = `question-${index + 1}`;
+                
+                const currentAnswer = this.answers[index];
+                
+                const optionsHtml = SCORING_OPTIONS.map(option => `
+                    <button class="option-btn ${currentAnswer === option.score ? 'selected' : ''}" 
+                            data-question="${index}" 
+                            data-score="${option.score}"
+                            type="button">
+                        <span class="option-label">${option.label}</span>
+                    </button>
+                `).join('');
+                
+                questionEl.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-number">${index + 1}</div>
+                        <div class="question-text">${question.cn}</div>
+                    </div>
+                    <div class="options-container">
+                        <div class="options-grid">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                `;
+                
+                return questionEl;
+            }
+            
+            updateProgress() {
+                const answeredCount = this.answers.filter(answer => answer !== null).length;
+                const progressPercent = Math.round((answeredCount / this.questions.length) * 100);
+                
+                document.getElementById('answeredCount').textContent = answeredCount;
+                document.getElementById('progressPercent').textContent = `${progressPercent}%`;
+                
+                document.getElementById('progressFill').style.width = `${progressPercent}%`;
+                
+                document.getElementById('submitBtn').disabled = answeredCount < this.questions.length;
+                
+                this.updateQuestionVisibility();
+            }
+            
+            updateQuestionVisibility() {
+            }
+            
+            scrollToCurrentQuestion() {
+                const questionEl = document.getElementById(`question-${this.currentQuestion + 1}`);
+                if (questionEl) {
+                    questionEl.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+            }
+            
+            selectAnswer(questionIndex, score) {
+                this.answers[questionIndex] = score;
+                
+                const questionEl = document.getElementById(`question-${questionIndex + 1}`);
+                const optionBtns = questionEl.querySelectorAll('.option-btn');
+                
+                optionBtns.forEach(btn => {
+                    const btnScore = parseInt(btn.getAttribute('data-score'));
+                    btn.classList.toggle('selected', btnScore === score);
+                });
+                
+                this.saveProgress();
+                this.updateProgress();
+            }
+            
+            goToQuestion(index) {
+                if (index >= 0 && index < this.questions.length) {
+                    this.currentQuestion = index;
+                    this.scrollToCurrentQuestion();
+                    this.updateProgress();
+                    this.saveProgress();
+                }
+            }
+            
+            submitTest() {
+                const unanswered = this.answers.filter(answer => answer === null);
+                if (unanswered.length > 0) {
+                    if (confirm(`暖宝，您还有${unanswered.length}题未作答，确定要提交吗？`)) {
+                        this.finalizeSubmission();
+                    }
+                } else {
+                    this.finalizeSubmission();
+                }
+            }
+            
+            finalizeSubmission() {
+                localStorage.setItem('scl90_answers', JSON.stringify(this.answers));
+                
+                localStorage.removeItem('scl90_test_progress');
+                
+                window.location.href = 'result.html';
+            }
+            
+            setupEventListeners() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.option-btn')) {
+                        const btn = e.target.closest('.option-btn');
+                        const questionIndex = parseInt(btn.getAttribute('data-question'));
+                        const score = parseInt(btn.getAttribute('data-score'));
+                        this.selectAnswer(questionIndex, score);
+                    }
+                });
+                
+                document.getElementById('submitBtn').addEventListener('click', () => {
+                    this.submitTest();
+                });
+                
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const answeredCount = this.answers.filter(answer => answer !== null).length;
+                        if (answeredCount === this.questions.length) {
+                            this.submitTest();
+                        }
+                    }
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const oldAnswers = localStorage.getItem('scl90_answers');
+            if (oldAnswers) {
+                const modal = document.getElementById('customModal');
+                modal.style.display = 'flex';
+                
+                document.getElementById('continueTest').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    const test = new SCL90Test();
+                });
+                
+                document.getElementById('newTest').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    localStorage.removeItem('scl90_test_progress');
+                    localStorage.removeItem('scl90_answers');
+                    const test = new SCL90Test();
+                });
+            } else {
+                const test = new SCL90Test();
+            }
+        });
+    </script>
+</body>
+</html>
